@@ -1,0 +1,315 @@
+# Default config for sway
+#
+# Copy this to ~/.config/sway/config and edit it to your liking.
+#
+# Read `man 5 sway` for a complete reference.
+
+# Fix for hotplugging scale change
+exec xrdb -load ~/.Xresources
+
+# set gtk theme
+set $gnome-schema org.gnome.desktop.interface
+exec_always {
+    gsettings set $gnome-schema gtk-theme 'Adwaita'
+    gsettings set $gnome-schema icon-theme 'Adwaita'
+    gsettings set $gnome-schema cursor-theme 'Adwaita'
+}
+
+# load devmon
+exec devmon
+
+### Variables
+#
+# Logo key. Use Mod1 for Alt.
+set $mod Mod4
+# Home row direction keys, like vim
+set $left a
+set $down s
+set $up w
+set $right d
+# The standard programs
+set $webbrowser firefox
+# Your preferred terminal emulator
+set $term termite
+set $filebrowser termite -e "/usr/bin/ranger"
+# Your preferred application launcher
+set $menu rofi -show drun -lines 50
+set $windowswitcher /run/media/bjoern/daten/Programming/Swytch/swytch.sh
+set $windowcloser /run/media/bjoern/daten/Programming/Swytch/swytch.sh kill
+set $fileopener /run/media/bjoern/daten/Programming/Roloo/roloo.sh dolphin
+
+### Output configuration
+#
+# Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
+output * bg /run/media/bjoern/daten/Fotos/Best_Of/DSCF7236.jpg stretch
+#
+# Example configuration:
+#
+#   eDP-1 scale 1
+#
+# You can get the names of your outputs by running: swaymsg -t get_outputs
+# beamer
+output HDMI-A-2 pos 2560,0 res 1280x720  scale 1
+# Desktop
+output DP-4 pos 2560,0 res 2560x1440 scale 1 transform 270
+output DP-3 pos 4000,900 res 1920x1080  scale 1
+# Laptop
+output eDP-1 pos 0,0 res 2560x1440 scale 1
+
+
+### Input configuration
+#
+# Example configuration:
+#
+#   input "2:14:SynPS/2_Synaptics_TouchPad" {
+#       dwt enabled
+#       tap enabled
+#       natural_scroll enabled
+#       middle_emulation enabled
+#   }
+#
+# You can get the names of your inputs by running: swaymsg -t get_inputs
+# Read `man 5 sway-input` for more information about this section.
+
+input "2:7:SynPS/2_Synaptics_TouchPad" {
+    dwt disabled
+    tap enabled
+    drag enabled
+    click_method button_areas
+    natural_scroll disabled
+    middle_emulation disabled
+    accel_profile adaptive
+    pointer_accel 0.4
+   }
+
+input "1386:20544:Wacom_Pen_and_multitouch_sensor_Finger" {
+    click_method none
+    tap disabled
+    events disabled
+   }
+
+input "2:10:TPPS/2_IBM_TrackPoint" {
+    scroll_method none
+   }
+
+input "1386:20544:Wacom_Pen_and_multitouch_sensor_Pen" {
+    map_to_output  eDP-1
+}
+input "1386:830:Wacom_Intuos_PT_M_2_Pen" {					
+    map_to_output  eDP-1
+}
+
+### Key bindings
+#
+# Basics:
+#
+    # start a terminal
+    bindsym $mod+Return exec $term
+
+    # kill focused window
+    bindsym $mod+Shift+q kill
+
+    bindsym Alt+Tab workspace back_and_forth
+
+    # start your launcher
+    bindsym $mod+q exec $menu
+
+    # window switcher
+    bindsym $mod+Tab exec $windowswitcher
+
+    # close a window
+    bindsym $mod+Shift+Ctrl+q exec $windowcloser
+
+    # find folder
+    bindsym $mod+Shift+f exec $fileopener
+
+    # start overview``
+    #bindsym $mod+s exec $windowswitcher
+    
+    # Drag floating windows by holding down $mod and left mouse button.
+    # Resize them with right mouse button + $mod.
+    # Despite the name, also works for non-floating windows.
+    # Change normal to inverse to use left mouse button for resizing and right
+    # mouse button for dragging.
+    floating_modifier $mod normal
+
+    # reload the configuration file
+    bindsym $mod+Shift+c reload
+
+    # exit sway (logs you out of your wayland session)
+    bindsym $mod+Shift+e exit
+
+# Display color temperature
+    bindsym $mod++ALT+6 exec redshift -O 6500 -m wayland
+    bindsym $mod+ALT+7 exec redshift -O 7000 -m wayland
+
+# programs
+    bindsym $mod+CTRL+d exec darktable --library :memory:
+    bindsym $mod+CTRL+b exec blender
+    bindsym $mod+CTRL+k exec krita
+    bindsym $mod+CTRL+f exec $filebrowser
+    bindsym $mod+CTRL+w exec $webbrowser
+    bindsym $mod+CTRL+g exec gedit
+    bindsym $mod+CTRL+c exec /home/bjoern/Software/Development/clion-2017.3.3/bin/clion.sh
+    bindsym $mod+CTRL+p exec pycharm
+    bindsym $mod+CTRL+t exec texstudio
+    bindsym $mod+CTRL+e exec emacs
+
+# set border
+default_border pixel 1
+default_floating_border pixel 10
+
+# floating size fix
+floating_minimum_size 1000 x 1000
+
+# cosmetics
+smart_gaps on
+
+# hardware control
+    bindsym XF86MonBrightnessDown exec brightnessctl s 10%-
+    bindsym XF86MonBrightnessUp exec brightnessctl s +10%
+    bindsym XF86AudioRaiseVolume exec pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') +10%
+    bindsym XF86AudioLowerVolume exec pactl set-sink-volume $(pacmd list-sinks |awk '/* index:/{print $3}') -10%
+
+# utilities
+    bindsym $mod+CTRL+s exec pavucontrol
+
+
+#
+# Moving around:
+#
+    # Move your focus around
+    bindsym $mod+$left focus left
+    bindsym $mod+$down focus down
+    bindsym $mod+$up focus up
+    bindsym $mod+$right focus right
+    # or use $mod+[up|down|left|right]
+    bindsym $mod+Left focus left
+    bindsym $mod+Down focus down
+    bindsym $mod+Up focus up
+    bindsym $mod+Right focus right
+
+    # _move_ the focused window with the same, but add Shift
+    bindsym $mod+Shift+$left move left
+    bindsym $mod+Shift+$down move down
+    bindsym $mod+Shift+$up move up
+    bindsym $mod+Shift+$right move right
+    # ditto, with arrow keys
+    bindsym $mod+Shift+Left move left
+    bindsym $mod+Shift+Down move down
+    bindsym $mod+Shift+Up move up
+    bindsym $mod+Shift+Right move right
+#
+# Workspaces:
+#
+    # switch to workspace
+    bindsym $mod+1 workspace 1
+    bindsym $mod+2 workspace 2
+    bindsym $mod+3 workspace 3
+    bindsym $mod+4 workspace 4
+    bindsym $mod+5 workspace 5
+    bindsym $mod+6 workspace 6
+    bindsym $mod+7 workspace 7
+    bindsym $mod+8 workspace 8
+    bindsym $mod+9 workspace 9
+    bindsym $mod+0 workspace 10
+    # move focused container to workspace
+    bindsym $mod+Shift+1 move container to workspace 1
+    bindsym $mod+Shift+2 move container to workspace 2
+    bindsym $mod+Shift+3 move container to workspace 3
+    bindsym $mod+Shift+4 move container to workspace 4
+    bindsym $mod+Shift+5 move container to workspace 5
+    bindsym $mod+Shift+6 move container to workspace 6
+    bindsym $mod+Shift+7 move container to workspace 7
+    bindsym $mod+Shift+8 move container to workspace 8
+    bindsym $mod+Shift+9 move container to workspace 9
+    bindsym $mod+Shift+0 move container to workspace 10
+    # Note: workspaces can have any name you want, not just numbers.
+    # We just use 1-10 as the default.
+#
+# Layout stuff:
+#
+    # You can "split" the current object of your focus with
+    # $mod+b or $mod+v, for horizontal and vertical splits
+    # respectively.
+    bindsym $mod+b splith
+    bindsym $mod+v splitv
+
+    # Switch the current container between different layout styles
+    bindsym $mod+r layout stacking
+    bindsym $mod+t layout tabbed
+    bindsym $mod+e layout toggle split
+
+    # Make the current focus fullscreen
+    bindsym $mod+f fullscreen
+
+    # Toggle the current focus between tiling and floating mode
+    bindsym $mod+Shift+space floating toggle
+
+    # Swap focus between the tiling area and the floating area
+    bindsym $mod+space focus mode_toggle
+
+    # move focus to the parent container
+    bindsym $mod+backslash focus parent
+
+    # auto layout 
+    bindsym $mod+CTRL+right layout auto right
+    bindsym $mod+CTRL+left layout auto left
+    bindsym $mod+CTRL+up layout auto top
+    bindsym $mod+CTRL+down layout auto bottom
+#
+# Scratchpad:
+#
+    # Sway has a "scratchpad", which is a bag of holding for windows.
+    # You can send windows there and get them back later.
+
+    # Move the currently focused window to the scratchpad
+    bindsym $mod+Shift+minus move scratchpad
+
+    # Show the next scratchpad window or hide the focused scratchpad window.
+    # If there are multiple scratchpad windows, this command cycles through them.
+    bindsym $mod+minus scratchpad show
+#
+# Resizing containers:
+#
+mode "resize" {
+    # left will shrink the containers width
+    # right will grow the containers width
+    # up will shrink the containers height
+    # down will grow the containers height
+    bindsym $left resize shrink width 10 px or 10 ppt
+    bindsym $down resize grow height 10 px or 10 ppt
+    bindsym $up resize shrink height 10 px or 10 ppt
+    bindsym $right resize grow width 10 px or 10 ppt
+
+    # ditto, with arrow keys
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
+    # return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+shift+r mode "resize"
+
+hide_edge_borders smart
+default_border pixel 1
+
+client.focused #4c8799 #285577 #ffffff #2e9ef4 #0000ff
+
+#
+# Status Bar:
+#
+# Read `man 5 sway-bar` for more information about this section.
+#bar {
+#    position top
+#    colors {
+#        statusline #ffffff
+#        background #323232
+#        inactive_workspace #32323200 #32323200 #5c5c5c
+#    }
+}
+
+include /etc/sway/config.d/*
